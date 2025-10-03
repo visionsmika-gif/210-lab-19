@@ -1,17 +1,6 @@
 // COMSC-210 | Lab 19 | Mika Aquino
 // IDE used: Visual Studio 2022
 
-/* INSTRUCTIONS:
-Lab 18 currently is structured to store and manipulate movie reviews for a single movie title. Abstract this structure by one layer. Automate it such that review comments are read from an external file, and the movie rating is a random double (one decimal place) between 1.0 and 5.0.
-
-Create a Movie class with these private member variables: movie title, a linked list of structs containing the rating and a review comment.
-
-Your main() function needs to feature a container of Movie objects. It'll be your choice of data structures to use for this container: array, vector, linked list.
-
-Your code doesn't need to ask the user to select adding nodes to the head/tail; you can just add nodes to the head to make it easiest.
-
-Exercise your class by writing a driver/demo program that will have at least four Movie objects, each with at least three reviews. */
-
 #include <iostream>
 #include <string>
 #include <iomanip>	// For displaying doubles
@@ -51,7 +40,7 @@ int main() {
 	vector<Movie> movies;						// Vector to hold Movie objects
 	srand(static_cast<unsigned int>(time(0)));	// Initialize seed
 	const int NUM_REVIEWS = 3;					// Each movie has 3 reviews.
-	const string& FILE_NAME = "comments.txt";	// File to read comments from
+	const string FILE_NAME = "comments.txt";	// File to read comments from
 	
 	// Create four movie objects and push them to the vector.
 	movies.push_back(Movie("The Nightmare Before Christmas"));
@@ -66,7 +55,7 @@ int main() {
 		return 1;
 	}
 
-	// The loop goes through each Movie in the vector and populates each movie with reviews.
+	// The loop goes through each movie in the vector and populates it with reviews.
 	for (int i = 0; i < movies.size(); ++i) {
 		for (int j = 0; j < NUM_REVIEWS; ++j) {
 			string comment;
@@ -78,10 +67,15 @@ int main() {
 
 	commentsFile.close();
 
+	// The loop outputs each movie in the vector and its corresponding reviews.
+	for (int i = 0; i < movies.size(); ++i) {
+		(movies.at(i)).outputReviewsAndAvg();
+	}
 
 	return 0;
 }
 
+// Movie destructor to clean up linked list
 Movie::~Movie() {
 	ReviewNode* current = head;
 	while (current) {
@@ -92,6 +86,7 @@ Movie::~Movie() {
 	head = nullptr;
 }
 
+// Movie member function to add a review
 void Movie::addNodeToFront(double newRating, const string& newComment) {
 	// Create a new node and make it the head of the linked list
 	ReviewNode* newNode = new ReviewNode;
@@ -101,6 +96,7 @@ void Movie::addNodeToFront(double newRating, const string& newComment) {
 	head = newNode;
 }
 
+// Movie member function to output reviews
 void Movie::outputReviewsAndAvg() const {
 	ReviewNode* current = head;
 	double totalRating = 0.0;
