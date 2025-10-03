@@ -34,7 +34,7 @@ public:
 	Movie(const string& movieTitle) : title(movieTitle), head(nullptr) {}
 
 	// Destructor
-	~Movie() {}
+	~Movie();
 
 	// Function to add a review
 	void addNodeToFront(double newRating, const string& newComment);
@@ -44,19 +44,40 @@ public:
 
 private:
 	string title;
-	ReviewNode* head;	// Linked list of reviews
+	ReviewNode* head; // Linked list of reviews
 };
 
 int main() {
 	vector<Movie> movies;						// Vector to hold Movie objects
 	srand(static_cast<unsigned int>(time(0)));	// Initialize seed
 	const int NUM_REVIEWS = 3;					// Each movie has 3 reviews.
+	const string& FILE_NAME = "comments.txt";	// File to read comments from
 	
 	// Create four movie objects and push them to the vector.
 	movies.push_back(Movie("The Nightmare Before Christmas"));
 	movies.push_back(Movie("Tangled"));
 	movies.push_back(Movie("Frozen II"));
 	movies.push_back(Movie("Ratatouille"));
+
+	// Check that the comments file is open.
+	ifstream commentsFile(FILE_NAME);
+	if (!commentsFile) {
+		cout << "ERROR: Unable to open " << FILE_NAME << ".\n";
+		return 1;
+	}
+
+	// The loop goes through each Movie in the vector and populates each movie with reviews.
+	for (int i = 0; i < movies.size(); ++i) {
+		for (int j = 0; j < NUM_REVIEWS; ++j) {
+			string comment;
+			getline(commentsFile, comment);									// Read a comment from the file.
+			double rating = (static_cast<double>(rand()) / RAND_MAX) * 5.0;	// Generate a random rating from 0-5.
+			(movies.at(i)).addNodeToFront(rating, comment);					// Add the review to the linked list.
+		}
+	}
+
+	commentsFile.close();
+
 
 	return 0;
 }
