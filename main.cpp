@@ -14,9 +14,11 @@ Exercise your class by writing a driver/demo program that will have at least fou
 
 #include <iostream>
 #include <string>
-#include <cctype>
-#include <iomanip>
-#include <vector>
+#include <iomanip>	// For displaying doubles
+#include <vector>	// For Movie container
+#include <cstdlib>	// For random numbers
+#include <ctime>	// For seed
+#include <fstream>	// For reading files
 
 using namespace std;
 
@@ -32,35 +34,41 @@ public:
 	Movie(const string& movieTitle) : title(movieTitle), head(nullptr) {}
 
 	// Destructor
-	~Movie() {
-		ReviewNode* current = head;
-		while (current) {
-			head = current->next;
-			delete current;
-			current = head;
-		}
-		head = nullptr;
-	}
+	~Movie() {}
 
 	// Function to add a review
 	void addNodeToFront(double newRating, const string& newComment);
 
 	// Function to output a movie's reviews
 	void outputReviewsAndAvg() const;
+
 private:
 	string title;
 	ReviewNode* head;	// Linked list of reviews
 };
 
 int main() {
-	ReviewNode* head = nullptr;
-	int modeChoice;
-	double rating;
-	string comment;
-	char reviewChoice;
-
+	vector<Movie> movies;						// Vector to hold Movie objects
+	srand(static_cast<unsigned int>(time(0)));	// Initialize seed
+	const int NUM_REVIEWS = 3;					// Each movie has 3 reviews.
+	
+	// Create four movie objects and push them to the vector.
+	movies.push_back(Movie("The Nightmare Before Christmas"));
+	movies.push_back(Movie("Tangled"));
+	movies.push_back(Movie("Frozen II"));
+	movies.push_back(Movie("Ratatouille"));
 
 	return 0;
+}
+
+Movie::~Movie() {
+	ReviewNode* current = head;
+	while (current) {
+		head = current->next;
+		delete current;
+		current = head;
+	}
+	head = nullptr;
 }
 
 void Movie::addNodeToFront(double newRating, const string& newComment) {
@@ -85,6 +93,7 @@ void Movie::outputReviewsAndAvg() const {
 		return;
 	}
 
+	cout << "MOVIE: " << title << "\n";
 	cout << "Outputting all reviews:\n";
 
 	// Traverse the linked list
