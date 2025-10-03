@@ -16,88 +16,54 @@ Exercise your class by writing a driver/demo program that will have at least fou
 #include <string>
 #include <cctype>
 #include <iomanip>
+#include <vector>
 
 using namespace std;
 
 struct ReviewNode {
-	float rating;
+	double rating;
 	string comment;
 	ReviewNode* next;
 };
 
-// Functions for linked list operations
-void addNodeToFront(ReviewNode*& head, float newRating, const string& newComment);
-void addNodeToTail(ReviewNode*& head, float newRating, const string& newComment);
-void deleteLinkedList(ReviewNode*& head);
+class Movie {
+public:
+	// Constructor
+	Movie(const string& movieTitle) : title(movieTitle), head(nullptr) {}
 
-// Function for outputting all the reviews and their calculated average
-void outputReviewsAndAvg(ReviewNode*& head);
+	// Destructor
+	~Movie() {
+		ReviewNode* current = head;
+		while (current) {
+			head = current->next;
+			delete current;
+			current = head;
+		}
+		head = nullptr;
+	}
+
+	// Function to add a review
+	void addNodeToFront(double newRating, const string& newComment);
+
+	// Function to output a movie's reviews
+	void outputReviewsAndAvg() const;
+private:
+	string title;
+	ReviewNode* head;	// Linked list of reviews
+};
 
 int main() {
 	ReviewNode* head = nullptr;
 	int modeChoice;
-	float rating;
+	double rating;
 	string comment;
 	char reviewChoice;
 
-	// Ask the user which mode they want to use to add nodes
-	do {
-		cout << "Which linked list method should we use?\n";
-		cout << "\t[1] New nodes are added at the head of the linked list\n";
-		cout << "\t[2] New nodes are added at the tail of the linked list\n";
-		cout << "Choice: ";
-		cin >> modeChoice;
-		if (modeChoice != 1 && modeChoice != 2) {
-			cout << "ERROR: Please enter 1 or 2. Try again.\n";
-		}
-	} while (modeChoice != 1 && modeChoice != 2);
-
-	// Continuously add new ratings to the linked list until the user doesn't want to anymore
-	do {
-		// Prompt the user for a rating
-		do {
-			cout << "Enter review rating 0-5: ";
-			cin >> rating;
-			if (rating < 0 || rating > 5) {
-				cout << "ERROR: Please enter a rating between 0 and 5. Try again.\n";
-			}
-		} while (rating < 0 || rating > 5);
-		cin.ignore();
-
-		// Prompt the user for a comment
-		cout << "Enter review comments: ";
-		getline(cin, comment);
-
-		// Add a node for the review
-		if (modeChoice == 1) {
-			addNodeToFront(head, rating, comment);
-		}
-		else {
-			addNodeToTail(head, rating, comment);
-		}
-
-		// Ask the user if they want to enter another review
-		do {
-			cout << "Enter another review? Y/N: ";
-			cin >> reviewChoice;
-			reviewChoice = tolower(reviewChoice);
-			if (reviewChoice != 'y' && reviewChoice != 'n') {
-				cout << "ERROR: Please enter Y or N. Try again.\n";
-			}
-		} while (reviewChoice != 'y' && reviewChoice != 'n');
-
-	} while (reviewChoice == 'y');
-
-	// Display the reviews and average
-	outputReviewsAndAvg(head);
-
-	// Deallocate memory
-	deleteLinkedList(head);
 
 	return 0;
 }
 
-void addNodeToFront(ReviewNode*& head, float newRating, const string& newComment) {
+void Movie::addNodeToFront(double newRating, const string& newComment) {
 	// Create a new node and make it the head of the linked list
 	ReviewNode* newNode = new ReviewNode;
 	newNode->rating = newRating;
@@ -106,41 +72,7 @@ void addNodeToFront(ReviewNode*& head, float newRating, const string& newComment
 	head = newNode;
 }
 
-void addNodeToTail(ReviewNode*& head, float newRating, const string& newComment) {
-	// Create a new node
-	ReviewNode* newNode = new ReviewNode;
-	newNode->rating = newRating;
-	newNode->comment = newComment;
-	newNode->next = nullptr;
-
-	// Set the new node as the head if the linked list is empty
-	if (!head) {
-		head = newNode;
-		return;
-	}
-
-	// If it's not empty, traverse the linked list to the tail and add the node there
-	ReviewNode* current = head;
-	while (current->next != nullptr) {
-		current = current->next;
-	}
-	current->next = newNode;
-}
-
-void deleteLinkedList(ReviewNode*& head) {
-	ReviewNode* current = head;
-	while (current) {
-		head = current->next;
-		delete current;
-		current = head;
-	}
-	head = nullptr;
-}
-
-// outputReviewsAndAvg() takes a linked list of ReviewNodes and outputs all of its reviews and the calculated average of the reviews.
-// args: head - a pointer to the linked list's head
-// returns: void
-void outputReviewsAndAvg(ReviewNode*& head) {
+void Movie::outputReviewsAndAvg() const {
 	ReviewNode* current = head;
 	double totalRating = 0.0;
 	int numReviews = 0;
